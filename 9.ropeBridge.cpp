@@ -3,10 +3,12 @@
 #include<utility>
 #include<string>
 #include<sstream>
+#include<cassert>
+#include<vector>
 
 using namespace std;
 
-pair<int, int> updateTail(const pair<int, int> &head, pair<int, int> &tail) {
+void updateTail(const pair<int, int> &head, pair<int, int> &tail) {
     int hr = head.first, hc = head.second;
     int &tr = tail.first, &tc = tail.second;
 
@@ -24,22 +26,22 @@ pair<int, int> updateTail(const pair<int, int> &head, pair<int, int> &tail) {
             } else if(hr < tr and hc > tc) {
                 // move top-right
                 --tr, ++tc;
-            } else if(hr < tr and hc < tc) {
+            } else if(hr > tr and hc > tc) {
                 ++tr, ++tc;
             } else {
                 ++tr, --tc;
             }
         }
     }
-
-    return tail;
 }
 
 int main() {
     string command;
     set<pair<int, int>> tailPositions;
 
-    pair<int, int> head, tail;
+    pair<int, int> head;
+
+    vector<pair<int, int>> tails(9);
 
     while(getline(cin, command)) {
         istringstream iss{command};
@@ -51,26 +53,34 @@ int main() {
         if(dir == "U") {
             while(steps--) {
                 --head.first;
-                tail = updateTail(head, tail);
-                tailPositions.insert(tail);
+                updateTail(head, tails[0]);
+                for(int i = 1; i < 9; ++i)
+                    updateTail(tails[i - 1], tails[i]);
+                tailPositions.insert(tails[8]);
             }
         } else if(dir == "R") {
             while(steps--) {
                 ++head.second;
-                tail = updateTail(head, tail);
-                tailPositions.insert(tail);
+                updateTail(head, tails[0]);
+                for(int i = 1; i < 9; ++i)
+                    updateTail(tails[i - 1], tails[i]);
+                tailPositions.insert(tails[8]);
             }
         } else if(dir == "D") {
             while(steps--) {
                 ++head.first;
-                tail = updateTail(head, tail);
-                tailPositions.insert(tail);
+                updateTail(head, tails[0]);
+                for(int i = 1; i < 9; ++i)
+                    updateTail(tails[i - 1], tails[i]);
+                tailPositions.insert(tails[8]);
             }
         } else {
             while(steps--) {
                 --head.second;
-                tail = updateTail(head, tail);
-                tailPositions.insert(tail);
+                updateTail(head, tails[0]);
+                for(int i = 1; i < 9; ++i)
+                    updateTail(tails[i - 1], tails[i]);
+                tailPositions.insert(tails[8]);
             }
         }
 
